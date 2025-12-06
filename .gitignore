@@ -1,0 +1,48 @@
+# Go binaries
+/bin/
+/pkg/
+/obj/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# Archivos compilados
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Archivos de compilación
+*.out
+
+# Archivos de configuración de editor
+.idea/
+.vscode/
+
+# Archivos temporales
+*.tmp
+*.log
+*.bak
+*.swp
+
+# Directorios de salida de SSR
+/public/
+/build/
+/dist/
+
+# Archivos generados por el servidor de SSR
+*.html
+*.js
+*.css
+
+# Archivos específicos del entorno de desarrollo
+.env
+.env.local
+.env.*.local
+
+# Archivos de pruebas unitarias o cobertura
+*.test
+*.coverage
+*.prof
