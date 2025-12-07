@@ -1,0 +1,35 @@
+package components
+
+import (
+	"sihce_diagnosticos/internal/models"
+	"fmt"
+	"strconv"
+)
+
+// DiagnosticoList renders the list of search results.
+templ DiagnosticoList(diagnosticos []models.Diagnostico, buscar string, startIndex int) {
+	for i, d := range diagnosticos {
+		<div
+			class="result-item p-3 border-b border-gray-200 cursor-pointer hover:bg-blue-50"
+			:class={ fmt.Sprintf("{ 'bg-blue-100': selectedIndex === %d }", startIndex + i) }
+			data-index={ strconv.Itoa(startIndex + i) }
+			data-text={ d.Diagnostico }
+			@click={ fmt.Sprintf("selectedIndex = %d; selectItem()", startIndex + i) }
+		>
+			{ d.Diagnostico }
+		</div>
+	}
+}
+
+// LoadMoreDiagnosticos renders the trigger for the infinite scroll.
+templ LoadMoreDiagnosticos(nextPage int, buscar string) {
+	<div
+		class="load-more-trigger"
+		hx-get={ fmt.Sprintf("/api/diagnosticos?pagina=%d&cantidad=10&buscar=%s", nextPage, buscar) }
+		hx-trigger="load-more"
+		hx-swap="outerHTML"
+		hx-indicator="#loading"
+	>
+		<div class="p-4 text-center">Cargando más...</div>
+	</div>
+}

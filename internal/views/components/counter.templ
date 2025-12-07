@@ -1,0 +1,10 @@
+package components
+
+templ Counter() {
+	<div x-data="{ count: 0 }" class="p-4 bg-white rounded-lg shadow-md">
+		<h2 class="text-2xl font-semibold mb-2">Counter Component</h2>
+		<p class="text-xl mb-4">Count: <span x-text="count"></span></p>
+		<button @click="count++" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 mr-2">Increment</button>
+		<button @click="count--" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">Decrement</button>
+	</div>
+}

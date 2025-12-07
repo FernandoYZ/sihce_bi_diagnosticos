@@ -1,0 +1,82 @@
+package components
+
+// SearchDiagnosticos provides a search input for diagnostics with autocomplete functionality.
+// It uses Alpine.js for UI state management (dropdown visibility, keyboard navigation)
+// and HTMX for fetching results from the server.
+templ SearchDiagnosticos() {
+	<div
+		class="relative w-full max-w-2xl mx-auto mt-10"
+		x-data="{
+			open: false,
+			isLoading: false,
+			selectedIndex: -1,
+			resultsCount: 0,
+			selectItem() {
+				const selectedEl = this.$refs.scrollContainer.querySelector(`[data-index='${this.selectedIndex}']`);
+				if (selectedEl) {
+					this.$refs.searchInput.value = selectedEl.getAttribute('data-text'); // Get clean text
+					this.open = false;
+					this.selectedIndex = -1;
+				}
+			}
+		}"
+		x-init="
+			const scrollContainer = $refs.scrollContainer;
+			$watch('open', value => { if (!value) selectedIndex = -1; });
+
+			// Listen for HTMX swaps to update the results count
+			const resultsContainer = $refs.scrollContainer.querySelector('#search-results');
+			const observer = new MutationObserver(() => {
+				resultsCount = resultsContainer.querySelectorAll('.result-item').length;
+			});
+			observer.observe(resultsContainer, { childList: true, subtree: true });
+
+			// Custom scroll handler
+			scrollContainer.addEventListener('scroll', () => {
+				if (isLoading) return;
+				const loadMoreTrigger = scrollContainer.querySelector('.load-more-trigger');
+				if (!loadMoreTrigger) return;
+				const scrollThreshold = 100;
+				if (scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight - scrollThreshold) {
+					isLoading = true;
+					htmx.trigger(loadMoreTrigger, 'load-more');
+					document.body.addEventListener('htmx:afterSettle', () => { isLoading = false; }, { once: true });
+					setTimeout(() => { isLoading = false; }, 1500); // Failsafe
+				}
+			});
+		"
+	>
+		<h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Buscador de Diagnósticos</h2>
+		<input
+			x-ref="searchInput"
+			type="search"
+			name="buscar"
+			class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+			placeholder="Escribe para buscar un diagnóstico..."
+			autocomplete="off"
+			hx-get="/api/diagnosticos"
+			hx-trigger="input changed delay:500ms"
+			hx-target="#search-results"
+			hx-swap="innerHTML"
+			hx-indicator="#loading"
+			@focus="open = true"
+			@input.debounce.1ms="if ($event.target.value === '') { open = false; selectedIndex = -1; }"
+			@keydown.arrow-down.prevent="selectedIndex = Math.min(selectedIndex + 1, resultsCount - 1); $nextTick(() => $refs.scrollContainer.querySelector(`[data-index='${selectedIndex}']`)?.scrollIntoView({ block: 'nearest' }));"
+			@keydown.arrow-up.prevent="selectedIndex = Math.max(selectedIndex - 1, 0); $nextTick(() => $refs.scrollContainer.querySelector(`[data-index='${selectedIndex}']`)?.scrollIntoView({ block: 'nearest' }));"
+			@keydown.enter.prevent="selectItem()"
+			@keydown.escape.prevent="open = false; selectedIndex = -1;"
+		/>
+		<div id="loading" class="htmx-indicator absolute top-full left-1/2 -translate-x-1/2 bg-gray-200 p-1 rounded-b-md text-sm z-10">Cargando...</div>
+		<div
+			x-ref="scrollContainer"
+			x-show="open"
+			@click.outside="open = false"
+			class="scroll-container absolute z-50 mt-1 w-full bg-white border rounded-md shadow-lg max-h-64 overflow-y-auto"
+		>
+			<div 
+				id="search-results"
+				@htmx:after-swap="open = false; $nextTick(() => { open = true; })"
+			></div>
+		</div>
+	</div>
+}
