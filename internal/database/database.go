@@ -10,19 +10,15 @@ import (
 	_ "github.com/microsoft/go-mssqldb"
 )
 
-type ConexionDB struct {
-	NombreBD *sql.DB
-}
-
-func ConectarDB(configuracion config.ConfigBD) (*sql.DB, error) {
+func ConectarDB(configuracion config.Config) (*sql.DB, error) {
 	cadenaConexion := fmt.Sprintf("server=%s;port=%s;database=%s;user id=%s;password=%s;encrypt=%s;TrustServerCertificate=%s;connection timeout=%d",
-		configuracion.Host,
-		configuracion.Puerto,
-		configuracion.NombreBD,
-		configuracion.Usuario,
-		configuracion.Contrasena,
-		configuracion.Encrypt,
-		configuracion.TrustServerCertificate,
+		configuracion.DBServer,
+		configuracion.DBPort,
+		configuracion.DBName,
+		configuracion.DBUser,
+		configuracion.DBPassword,
+		configuracion.DBEncrypt,
+		configuracion.DBTrustServerCertificate,
 		5,
 	)
 
@@ -32,6 +28,14 @@ func ConectarDB(configuracion config.ConfigBD) (*sql.DB, error) {
 		return nil, fmt.Errorf("error al abrir conexion: %v", err)
 	}
 
+	// Verificar la conexión
+	err = db.Ping()
+	if err != nil {
+		db.Close()
+		return nil, fmt.Errorf("no se puede conectar a la base de datos: %v", err)
+	}
+
+
 	// Configuración de la conexión
 	db.SetConnMaxIdleTime(5 * time.Second)
 	db.SetMaxIdleConns(0)
@@ -39,17 +43,6 @@ func ConectarDB(configuracion config.ConfigBD) (*sql.DB, error) {
 
 	log.Println("✓ Conexión exitosa a la base de datos")
 	return db, nil
-}
-
-func verificarConexion(db *sql.DB) error {
-	err := db.Ping()
-	if err != nil {
-		log.Printf("❌ Error al verificar la conexión a la base de datos: %v", err)
-		return fmt.Errorf("no se puede conectar a la base de datos: %v", err)
-	}
-
-	log.Println("✓ Conexión verificada correctamente a la base de datos")
-	return nil
 }
 
 func CerrarConexion(db *sql.DB) error {
