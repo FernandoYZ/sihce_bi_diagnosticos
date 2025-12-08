@@ -19,7 +19,7 @@ func ConectarDB(configuracion config.Config) (*sql.DB, error) {
 		configuracion.DBPassword,
 		configuracion.DBEncrypt,
 		configuracion.DBTrustServerCertificate,
-		5,
+		120,
 	)
 
 	// Abrir conexión a la base de datos
@@ -35,10 +35,10 @@ func ConectarDB(configuracion config.Config) (*sql.DB, error) {
 		return nil, fmt.Errorf("no se puede conectar a la base de datos: %v", err)
 	}
 
-
 	// Configuración de la conexión
 	db.SetConnMaxIdleTime(5 * time.Second)
-	db.SetMaxIdleConns(0)
+	db.SetMaxIdleConns(5)
+	db.SetMaxOpenConns(20)
 	db.SetConnMaxLifetime(30 * time.Minute)
 
 	log.Println("✓ Conexión exitosa a la base de datos")
