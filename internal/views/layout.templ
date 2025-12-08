@@ -9,11 +9,11 @@ templ Layout(title string) {
 			<title>{ title }</title>
 			<link rel="icon" href="/public/favicon.avif" type="image/avif">
 			// HTMLX CDN
-			<script src="https://unpkg.com/htmx.org@2.0.8/dist/htmx.min.js"></script>
+			<script src="/public/js/htmx.min.js"></script>
 			// TailwindCSS CDN
 			<script src="https://cdn.tailwindcss.com"></script>
 			// Alpine.js CDN
-			<script defer src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.15.0/cdn.min.js"></script>
+			<script defer src="/public/js/alpine.min.js"></script>
 		</head>
 		<body>
 			{ children... }
