@@ -14,6 +14,7 @@ templ DiagnosticoList(diagnosticos []models.Diagnostico, buscar string, startInd
 			:class={ fmt.Sprintf("{ 'bg-blue-100': selectedIndex === %d }", startIndex + i) }
 			data-index={ strconv.Itoa(startIndex + i) }
 			data-text={ d.Diagnostico }
+			data-id={ strconv.Itoa(d.IdDiagnostico) }
 			@click={ fmt.Sprintf("selectedIndex = %d; selectItem()", startIndex + i) }
 		>
 			{ d.Diagnostico }
@@ -24,12 +25,13 @@ templ DiagnosticoList(diagnosticos []models.Diagnostico, buscar string, startInd
 // LoadMoreDiagnosticos renders the trigger for the infinite scroll.
 templ LoadMoreDiagnosticos(nextPage int, buscar string) {
 	<div
+		id="load-more-trigger"
 		class="load-more-trigger"
 		hx-get={ fmt.Sprintf("/api/diagnosticos?pagina=%d&cantidad=10&buscar=%s", nextPage, buscar) }
 		hx-trigger="load-more"
-		hx-swap="outerHTML"
-		hx-indicator="#loading"
+		hx-target="#search-results"
+		hx-swap="beforeend"
 	>
-		<div class="p-4 text-center">Cargando más...</div>
+		<div class="p-4 text-center htmx-indicator">Cargando más...</div>
 	</div>
 }

@@ -1,0 +1,70 @@
+package components
+
+templ EmptyCards() {
+	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+		// Card 1: Pacientes Únicos
+		<div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+			<div class="flex justify-between items-start">
+				<div>
+					<p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pacientes Únicos</p>
+					<h3 class="text-3xl font-bold text-slate-300 mt-1">---</h3>
+				</div>
+				<div class="py-2 px-3 bg-blue-50 text-blue-600 rounded-full">
+					<i class="fa-solid fa-users text-xl"></i>
+				</div>
+			</div>
+			<div class="mt-4 flex items-center text-sm">
+				<span class="text-slate-400 text-xs">Selecciona un diagnóstico y fechas</span>
+			</div>
+		</div>
+
+		// Card 2: Total Atenciones
+		<div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+			<div class="flex justify-between items-start">
+				<div>
+					<p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Atenciones</p>
+					<h3 class="text-3xl font-bold text-slate-300 mt-1">---</h3>
+				</div>
+				<div class="py-2 px-3.5 bg-blue-50 text-blue-600 rounded-full">
+					<i class="fa-regular fa-calendar-check text-xl"></i>
+				</div>
+			</div>
+			<div class="mt-4 flex items-center text-sm">
+				<span class="text-slate-400 text-xs">Selecciona un diagnóstico y fechas</span>
+			</div>
+		</div>
+
+		// Card 3: Reincidencia (Ratio)
+		<div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+			<div class="flex justify-between items-start">
+				<div>
+					<p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Reincidencia (Ratio)</p>
+					<h3 class="text-3xl font-bold text-slate-300 mt-1">---</h3>
+				</div>
+				<div class="py-2 px-3 bg-blue-50 text-blue-600 rounded-full">
+					<i class="fa-solid fa-rotate-right text-xl"></i>
+				</div>
+			</div>
+			<div class="mt-4 text-xs text-slate-400">
+				Promedio de citas por paciente único en el periodo.
+			</div>
+		</div>
+
+		// Card 4: Distritos Afectados
+		<div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+			<div class="flex justify-between items-start">
+				<div>
+					<p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Distritos Afectados</p>
+					<h3 class="text-3xl font-bold text-slate-300 mt-1">---</h3>
+				</div>
+				<div class="py-2 px-3 bg-blue-50 text-blue-600 rounded-full">
+					<i class="fa-solid fa-map-location-dot text-xl"></i>
+				</div>
+			</div>
+			<div class="mt-4 flex items-center text-sm">
+				<span class="text-slate-400 text-xs">Selecciona un diagnóstico y fechas</span>
+			</div>
+		</div>
+	</div>
+}

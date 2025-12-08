@@ -1,0 +1,17 @@
+package components
+
+templ ChartSexo() {
+	<div
+		x-data="sexoChartComponent()"
+		@update-charts.window="
+			fetchData($event.detail.IdDiagnostico, $event.detail.FechaInicio, $event.detail.FechaFin)
+		"
+		class="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
+	>
+		<div class="mb-6">
+			<h3 class="font-bold text-slate-700 text-lg">Distribución por Sexo</h3>
+			<p class="text-xs text-slate-400">Distribución de pacientes por sexo</p>
+		</div>
+		<div x-ref="chart" id="sexo-chart-container"></div>
+	</div>
+}

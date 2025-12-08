@@ -1,0 +1,23 @@
+package components
+
+import "sihce_diagnosticos/internal/models"
+
+// DiagnosticoListOOB is a special component for Out-of-Band swaps in HTMX.
+// It renders the new list of items to be appended and also replaces the
+// "load more" trigger with a new one.
+templ DiagnosticoListOOB(diagnosticos []models.Diagnostico, buscar string, startIndex int, nextPage int, hasMore bool) {
+	// 1. These are the new items to be appended to the list.
+	//    The parent element has hx-target="#search-results" and hx-swap="beforeend".
+	@DiagnosticoList(diagnosticos, buscar, startIndex)
+
+	// 2. This is the "Out of Band" element. It will replace the element
+	//    with id="load-more-trigger" with this new content.
+	if hasMore {
+		<div id="load-more-trigger" hx-swap-oob="outerHTML">
+			@LoadMoreDiagnosticos(nextPage, buscar)
+		</div>
+	} else {
+		// If there are no more results, replace the trigger with an empty div.
+		<div id="load-more-trigger" hx-swap-oob="outerHTML"></div>
+	}
+}

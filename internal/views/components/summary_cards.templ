@@ -1,0 +1,113 @@
+package components
+
+import (
+	"sihce_diagnosticos/internal/models"
+	"fmt"
+)
+
+// diffDisplay renders the text and color for a change value.
+templ diffDisplay(value int64) {
+	if value > 0 {
+		<span class="text-emerald-500 font-semibold flex items-center gap-1">
+			<i class="fa-solid fa-arrow-trend-up"></i>
+			<span>{ fmt.Sprintf(" +%d", value) }</span>
+		</span>
+		<span class="text-slate-400 ml-2">vs mes anterior</span>
+	} else if value < 0 {
+		<span class="text-red-500 font-semibold flex items-center gap-1">
+			<i class="fa-solid fa-arrow-trend-down"></i>
+			<span>{ fmt.Sprintf(" %d", value) }</span>
+		</span>
+		<span class="text-slate-400 ml-2 text-xs">vs mes anterior</span>
+	} else {
+		<span class="text-slate-500 font-medium">Sin cambios</span>
+	}
+}
+
+// percentDisplay renders the text and color for a percentage change value.
+templ percentDisplay(value float64) {
+	if value > 0 {
+		<span class="text-emerald-500 font-semibold flex items-center gap-1">
+			<i class="fa-solid fa-arrow-trend-up"></i>
+			<span>{ fmt.Sprintf(" +%.2f%%", value) }</span>
+		</span>
+		<span class="text-slate-400 ml-2">vs mes anterior</span>
+	} else if value < 0 {
+		<span class="text-red-500 font-semibold flex items-center gap-1">
+			<i class="fa-solid fa-arrow-trend-down"></i>
+			<span>{ fmt.Sprintf(" %.2f%%", value) }</span>
+		</span>
+		<span class="text-slate-400 ml-2 text-xs">vs mes anterior</span>
+	} else {
+		<span class="text-slate-500 font-medium">Sin cambios</span>
+	}
+}
+
+templ SummaryCards(resumen models.ResumenDiagnostico) {
+	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+		
+		// Card 2: Pacientes Únicos
+		<div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+			<div class="flex justify-between items-start">
+				<div>
+					<p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pacientes Únicos</p>
+					<h3 class="text-3xl font-bold text-slate-800 mt-1">{ fmt.Sprintf("%d", resumen.TotalPacientesUnicosActual.Int64) }</h3>
+				</div>
+				<div class="py-2 px-3 bg-blue-50 text-blue-600 rounded-full">
+					<i class="fa-solid fa-users text-xl"></i>
+				</div>
+			</div>
+			<div class="mt-4 flex items-center text-sm">
+				@percentDisplay(resumen.PorcentajeCambioPacientes.Float64)
+			</div>
+		</div>
+
+		// Card 3: Total Atenciones
+		<div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+			<div class="flex justify-between items-start">
+				<div>
+					<p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Atenciones</p>
+					<h3 class="text-3xl font-bold text-slate-800 mt-1">{ fmt.Sprintf("%d", resumen.TotalAtencionesMesActual.Int64) }</h3>
+				</div>
+				<div class="py-2 px-3.5 bg-blue-50 text-blue-600 rounded-full">
+					<i class="fa-regular fa-calendar-check text-xl"></i>
+				</div>
+			</div>
+			<div class="mt-4 flex items-center text-sm">
+				@percentDisplay(resumen.PorcentajeCambioAtenciones.Float64)
+			</div>
+		</div>
+
+		// Card 4: Reincidencia (Ratio)
+		<div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+			<div class="flex justify-between items-start">
+				<div>
+					<p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Reincidencia (Ratio)</p>
+					<h3 class="text-3xl font-bold text-slate-800 mt-1">{ fmt.Sprintf("%.2f", resumen.RatioDeRetorno.Float64) }</h3>
+				</div>
+				<div class="py-2 px-3 bg-blue-50 text-blue-600 rounded-full">
+					<i class="fa-solid fa-rotate-right text-xl"></i>
+				</div>
+			</div>
+			<div class="mt-4 text-xs text-slate-400">
+				Promedio de citas por paciente único en el periodo.
+			</div>
+		</div>
+
+		// Card 1: Distritos Afectados
+		<div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+			<div class="flex justify-between items-start">
+				<div>
+					<p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Distritos Afectados</p>
+					<h3 class="text-3xl font-bold text-slate-800 mt-1">{ fmt.Sprintf("%d", resumen.DistritosAfectadosMesActual.Int64) }</h3>
+				</div>
+				<div class="py-2 px-3 bg-blue-50 text-blue-600 rounded-full">
+					<i class="fa-solid fa-map-location-dot text-xl"></i>
+				</div>
+			</div>
+			<div class="mt-4 flex items-center text-sm">
+				@diffDisplay(resumen.DiferenciaDistritosAfectados.Int64)
+			</div>
+		</div>
+	</div>
+}
