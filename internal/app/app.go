@@ -79,7 +79,7 @@ func IniciarEnv() *config.Config {
 }
 
 func IniciarDatabase(cfg *config.Config) (*sql.DB, error) {
-db, err := database.ConectarDB(*cfg)
+	db, err := database.ConectarDB(*cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -109,5 +109,8 @@ func configurarServidor(cfg *config.Config, handler http.Handler) *http.Server {
 	return &http.Server{
 		Addr:    serverAddr,
 		Handler: handler,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  60 * time.Second,
 	}
 }
