@@ -1,4 +1,4 @@
-package repository
+package diagnostico
 
 const (
 	QUERY_OBTENER_DIAGNOSTICOS = `

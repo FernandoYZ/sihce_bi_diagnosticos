@@ -1,25 +1,31 @@
-package controller
+package diagnostico
 
 import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"sihce_diagnosticos/internal/repository"
 	"sihce_diagnosticos/internal/views"
 	"sihce_diagnosticos/internal/views/components"
 	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
-type DiagnosticoController struct {
-	repo repository.DiagnosticoRepository
+type controller struct {
+	servicio *servicioDiagnostico
 }
 
-func NewDiagnosticoController(repo repository.DiagnosticoRepository) *DiagnosticoController {
-	return &DiagnosticoController{repo: repo}
+func DiagnosticoController(servicio *servicioDiagnostico) *controller {
+	return &controller{servicio: servicio}
+}
+
+func (c *controller) Router(r *mux.Router) {
+	r.HandleFunc("/", c.PaginaHome).Methods(http.MethodGet)
+	r.HandleFunc("/api/diagnosticos", c.ObtenerDiagnosticos).Methods(http.MethodGet)
 }
 
 // ObtenerDiagnosticos maneja la solicitud GET para obtener los diagnósticos
-func (c *DiagnosticoController) ObtenerDiagnosticos(w http.ResponseWriter, r *http.Request) {
+func (c *controller) ObtenerDiagnosticos(w http.ResponseWriter, r *http.Request) {
 	// Leer parámetros de la consulta
 	paginaStr := r.URL.Query().Get("pagina")
 	cantidadStr := r.URL.Query().Get("cantidad")
@@ -35,10 +41,10 @@ func (c *DiagnosticoController) ObtenerDiagnosticos(w http.ResponseWriter, r *ht
 		cantidad = 10
 	}
 
-	// Obtener los diagnósticos desde el repositorio
-	diagnosticos, err := c.repo.ObtenerDiagnosticos(r.Context(), pagina, cantidad, buscar)
+	// Obtener los diagnósticos desde el servicio
+	diagnosticos, err := c.servicio.ObtenerDiagnosticos(r.Context(), pagina, cantidad, buscar)
 	if err != nil {
-		log.Printf("Error al obtener diagnósticos del repositorio: %v", err)
+		log.Printf("Error al obtener diagnósticos del servicio: %v", err)
 		http.Error(w, "Error al obtener los diagnósticos", http.StatusInternalServerError)
 		return
 	}
@@ -77,8 +83,7 @@ func (c *DiagnosticoController) ObtenerDiagnosticos(w http.ResponseWriter, r *ht
 }
 
 // RenderHomePage handles the request to render the home page
-func (c *DiagnosticoController) PaginaHome(w http.ResponseWriter, r *http.Request) {
+func (c *controller) PaginaHome(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	views.Home("World").Render(r.Context(), w)
 }
-

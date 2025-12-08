@@ -1,4 +1,4 @@
-package repository
+package diagnostico
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"sihce_diagnosticos/internal/models"
 )
 
-type DiagnosticoRepository interface {
+type repositorioDiagnostico interface {
 	ObtenerDiagnosticos(ctx context.Context, pagina, cantidad int, buscar string) ([]models.Diagnostico, error)
 }
 
@@ -15,7 +15,7 @@ type diagnosticoRepository struct {
 	db *sql.DB
 }
 
-func NewDiagnosticoRepository(db *sql.DB) DiagnosticoRepository {
+func DiagnosticoRepository(db *sql.DB) repositorioDiagnostico {
 	return &diagnosticoRepository{db: db}
 }
 
