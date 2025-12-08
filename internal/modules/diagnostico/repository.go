@@ -9,6 +9,9 @@ import (
 
 type repositorioDiagnostico interface {
 	ObtenerDiagnosticos(ctx context.Context, pagina, cantidad int, buscar string) ([]models.Diagnostico, error)
+	GetResumenDiagnostico(ctx context.Context, idDiagnostico int, fechaInicio, fechaFin string) (*models.ResumenDiagnostico, error)
+	GetSexoPorDiagnostico(ctx context.Context, idDiagnostico int, fechaInicio, fechaFin string) ([]models.SexoPorDiagnostico, error)
+	GetEdadesPorDiagnostico(ctx context.Context, idDiagnostico int, fechaInicio, fechaFin string) ([]models.EdadesPorDiagnostico, error)
 }
 
 type diagnosticoRepository struct {
@@ -18,6 +21,89 @@ type diagnosticoRepository struct {
 func DiagnosticoRepository(db *sql.DB) repositorioDiagnostico {
 	return &diagnosticoRepository{db: db}
 }
+
+func (r *diagnosticoRepository) GetResumenDiagnostico(ctx context.Context, idDiagnostico int, fechaInicio, fechaFin string) (*models.ResumenDiagnostico, error) {
+	var resumen models.ResumenDiagnostico
+	err := r.db.QueryRowContext(ctx, QUERY_RESUMEN_CARDS,
+		sql.Named("IdDiagnostico", idDiagnostico),
+		sql.Named("FechaInicio", fechaInicio),
+		sql.Named("FechaFin", fechaFin),
+	).Scan(
+		&resumen.DistritosAfectadosMesActual,
+		&resumen.DistritosAfectadosMesAnterior,
+		&resumen.DiferenciaDistritosAfectados,
+		&resumen.TotalPacientesUnicosActual,
+		&resumen.TotalPacientesUnicosMesAnterior,
+		&resumen.PorcentajeCambioPacientes,
+		&resumen.TotalAtencionesMesActual,
+		&resumen.TotalAtencionesMesAnterior,
+		&resumen.PorcentajeCambioAtenciones,
+		&resumen.RatioDeRetorno,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // No results found is not an error here
+		}
+		log.Printf("Error executing or scanning summary query: %v", err)
+		return nil, err
+	}
+	return &resumen, nil
+}
+
+func (r *diagnosticoRepository) GetSexoPorDiagnostico(ctx context.Context, idDiagnostico int, fechaInicio, fechaFin string) ([]models.SexoPorDiagnostico, error) {
+	rows, err := r.db.QueryContext(ctx, QUERY_OBTENER_SEXO_POR_DIAGNOSTICO,
+		sql.Named("IdDiagnostico", idDiagnostico),
+		sql.Named("FechaInicio", fechaInicio),
+		sql.Named("FechaFin", fechaFin),
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var resultados []models.SexoPorDiagnostico
+	for rows.Next() {
+		var res models.SexoPorDiagnostico
+		if err := rows.Scan(&res.Sexo, &res.CantidadAtenciones); err != nil {
+			log.Printf("Error al escanear resultado de SexoPorDiagnostico: %v", err)
+			continue
+		}
+		resultados = append(resultados, res)
+	}
+	if err := rows.Err(); err != nil {
+		log.Printf("Error durante la iteración de SexoPorDiagnostico: %v", err)
+		return nil, err
+	}
+	return resultados, nil
+}
+
+func (r *diagnosticoRepository) GetEdadesPorDiagnostico(ctx context.Context, idDiagnostico int, fechaInicio, fechaFin string) ([]models.EdadesPorDiagnostico, error) {
+	rows, err := r.db.QueryContext(ctx, QUERY_OBTENER_EDADES_POR_DIAGNOSTICO,
+		sql.Named("IdDiagnostico", idDiagnostico),
+		sql.Named("FechaInicio", fechaInicio),
+		sql.Named("FechaFin", fechaFin),
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var resultados []models.EdadesPorDiagnostico
+	for rows.Next() {
+		var res models.EdadesPorDiagnostico
+		if err := rows.Scan(&res.GrupoEdad, &res.CantidadAtenciones); err != nil {
+			log.Printf("Error al escanear resultado de EdadesPorDiagnostico: %v", err)
+			continue
+		}
+		resultados = append(resultados, res)
+	}
+	if err := rows.Err(); err != nil {
+		log.Printf("Error durante la iteración de EdadesPorDiagnostico: %v", err)
+		return nil, err
+	}
+	return resultados, nil
+}
+
 
 func (r *diagnosticoRepository) ObtenerDiagnosticos(ctx context.Context, pagina, cantidad int, buscar string) ([]models.Diagnostico, error) {
 	offset := (pagina - 1) * cantidad
