@@ -2,16 +2,20 @@ package components
 
 templ ChartEdades() {
 	<div
-		x-data="edadesChartComponent()"
+		x-data="edadesChartComponent"
+		x-init="init()"
 		@update-charts.window="
 			fetchData($event.detail.IdDiagnostico, $event.detail.FechaInicio, $event.detail.FechaFin)
 		"
 		class="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
 	>
-		<div class="mb-6">
+		<div class="flex items-center justify-between mb-4">
 			<h3 class="font-bold text-slate-700 text-lg">Grupo Etario Afectado</h3>
-			<p class="text-xs text-slate-400">Distribución de pacientes por edad</p>
 		</div>
-		<div x-ref="chart" id="edades-chart-container"></div>
+		<div x-ref="chart" id="edades-chart-container" x-show="hasData"></div>
+		<div x-show="!hasData" class="w-full h-80 flex items-center justify-center">
+			<p class="text-slate-500">Seleccione un diagnóstico y rango de fechas para ver el gráfico.</p>
+		</div>
 	</div>
 }
+

@@ -1,0 +1,22 @@
+package components
+
+templ ChartTiempo() {
+	<div
+		class="bg-white p-6 rounded-xl shadow-sm border border-slate-200"
+		x-data="tiempoChartComponent"
+		x-init="init()"
+		@update-charts.window="fetchData($event.detail.IdDiagnostico, $event.detail.FechaInicio, $event.detail.FechaFin)"
+	>
+		<div class="flex items-center justify-between mb-4">
+			<h2 class="text-lg font-bold text-slate-700">
+				<i class="fa-solid fa-chart-line text-blue-600 mr-2"></i>
+				Tendencia de Atenciones en el Tiempo
+			</h2>
+		</div>
+		<div x-ref="chart" class="w-full" x-show="hasData"></div>
+		<div x-show="!hasData" class="w-full h-80 flex items-center justify-center">
+			<p class="text-slate-500">Seleccione un diagnóstico y rango de fechas para ver el gráfico.</p>
+		</div>
+	</div>
+}
+

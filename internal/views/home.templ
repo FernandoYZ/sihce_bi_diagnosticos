@@ -8,7 +8,7 @@ templ Home(name string) {
 
 			<form
 				id="analizador-form"
-				class="w-full max-w-[88rem] mx-auto"
+				class="w-full max-w-[90rem] mx-auto"
 				hx-get="/api/resumen"
 				hx-target="#summary-cards"
 				hx-indicator=".htmx-indicator"
@@ -26,13 +26,28 @@ templ Home(name string) {
 				@components.FiltroReporte()
 			</form>
 
-			<div id="summary-cards" class="w-full max-w-[88rem] mx-auto mt-4">
+			<div id="summary-cards" class="w-full max-w-[90rem] mx-auto mt-4">
 				@components.EmptyCards()
 			</div>
 
-			<div class="w-full max-w-[88rem] mx-auto mt-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
-				@components.ChartSexo()
-				@components.ChartEdades()
+			<!-- Primera fila: Tendencia de Atenciones (75%) + Grupo Etario (25%) -->
+			<div class="w-full max-w-[90rem] mx-auto mt-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+				<div class="lg:col-span-3">
+					@components.ChartTiempo()
+				</div>
+				<div class="lg:col-span-1">
+					@components.ChartEdades()
+				</div>
+			</div>
+
+			<!-- Segunda fila: Distribución por Sexo (25%) + Distribución por Distritos (75%) -->
+			<div class="w-full max-w-[90rem] mx-auto mt-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+				<div class="lg:col-span-1">
+					@components.ChartSexo()
+				</div>
+				<div class="lg:col-span-3">
+					@components.ChartDistritos()
+				</div>
 			</div>
 		</div>
 	}
