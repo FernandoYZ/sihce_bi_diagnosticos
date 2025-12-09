@@ -107,8 +107,8 @@ func configurarServidor(cfg *config.Config, handler http.Handler) *http.Server {
 	serverAddr := ":" + port
 
 	return &http.Server{
-		Addr:    serverAddr,
-		Handler: handler,
+		Addr:         serverAddr,
+		Handler:      handler,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  60 * time.Second,
