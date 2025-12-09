@@ -3,13 +3,13 @@ package config
 import "os"
 
 type Config struct {
-	ServerPort			   string
-	DBUser                 string
-	DBPassword             string
-	DBServer               string
-	DBPort                 string
-	DBName                 string
-	DBEncrypt              string
+	ServerPort               string
+	DBUser                   string
+	DBPassword               string
+	DBServer                 string
+	DBPort                   string
+	DBName                   string
+	DBEncrypt                string
 	DBTrustServerCertificate string
 }
 
