@@ -25,6 +25,8 @@ func (c *controller) Router(r *mux.Router) {
 	r.HandleFunc("/api/resumen", c.GetResumenHandler).Methods(http.MethodGet)
 	r.HandleFunc("/api/sexo-por-diagnostico", c.GetSexoPorDiagnosticoHandler).Methods(http.MethodGet)
 	r.HandleFunc("/api/edades-por-diagnostico", c.GetEdadesPorDiagnosticoHandler).Methods(http.MethodGet)
+	r.HandleFunc("/api/distritos-por-diagnostico", c.GetDistritosPorDiagnosticoHandler).Methods(http.MethodGet)
+	r.HandleFunc("/api/atenciones-por-dia", c.GetAtencionesPorDiaHandler).Methods(http.MethodGet)
 }
 
 func (c *controller) GetSexoPorDiagnosticoHandler(w http.ResponseWriter, r *http.Request) {
@@ -62,6 +64,44 @@ func (c *controller) GetEdadesPorDiagnosticoHandler(w http.ResponseWriter, r *ht
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(edadesData); err != nil {
 		http.Error(w, "Error al serializar los resultados de edades por diagnostico", http.StatusInternalServerError)
+	}
+}
+
+func (c *controller) GetDistritosPorDiagnosticoHandler(w http.ResponseWriter, r *http.Request) {
+	idDiagnosticoStr := r.URL.Query().Get("IdDiagnostico")
+	fechaInicioStr := r.URL.Query().Get("FechaInicio")
+	fechaFinStr := r.URL.Query().Get("FechaFin")
+
+	distritosData, err := c.servicio.GetDistritosPorDiagnosticoConValidacion(r.Context(), idDiagnosticoStr, fechaInicioStr, fechaFinStr)
+	if err != nil {
+		log.Printf("Error en GetDistritosPorDiagnosticoHandler: %v", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(distritosData); err != nil {
+		http.Error(w, "Error al serializar los resultados de distritos por diagnostico", http.StatusInternalServerError)
+	}
+}
+
+func (c *controller) GetAtencionesPorDiaHandler(w http.ResponseWriter, r *http.Request) {
+	idDiagnosticoStr := r.URL.Query().Get("IdDiagnostico")
+	fechaInicioStr := r.URL.Query().Get("FechaInicio")
+	fechaFinStr := r.URL.Query().Get("FechaFin")
+
+	atencionesPorDiaData, err := c.servicio.GetAtencionesPorDiaConValidacion(r.Context(), idDiagnosticoStr, fechaInicioStr, fechaFinStr)
+	if err != nil {
+		log.Printf("Error en GetAtencionesPorDiaHandler: %v", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(atencionesPorDiaData); err != nil {
+		http.Error(w, "Error al serializar los resultados de atenciones por dia", http.StatusInternalServerError)
 	}
 }
 

@@ -21,11 +21,23 @@ type ResumenDiagnostico struct {
 }
 
 type SexoPorDiagnostico struct {
-	Sexo             string `json:"sexo"`
+	Sexo               string `json:"sexo"`
 	CantidadAtenciones int    `json:"cantidadAtenciones"`
 }
 
 type EdadesPorDiagnostico struct {
-	GrupoEdad        string `json:"grupoEdad"`
+	GrupoEdad          string `json:"grupoEdad"`
+	CantidadAtenciones int    `json:"cantidadAtenciones"`
+}
+
+type DistritosPorDiagnostico struct {
+	IdDistrito         int    `json:"idDistrito"`
+	NombreDistrito     string `json:"nombreDistrito"`
+	NombreProvincia    string `json:"nombreProvincia"`
+	CantidadAtenciones int    `json:"cantidadAtenciones"`
+}
+
+type AtencionesPorDia struct {
+	Fecha              string `json:"fecha"`
 	CantidadAtenciones int    `json:"cantidadAtenciones"`
 }

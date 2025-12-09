@@ -7,10 +7,10 @@ import (
 )
 
 var (
-	ErrCamposRequeridos    = errors.New("todos los campos son requeridos: IdDiagnostico, FechaInicio, FechaFin")
+	ErrCamposRequeridos      = errors.New("todos los campos son requeridos: IdDiagnostico, FechaInicio, FechaFin")
 	ErrIdDiagnosticoInvalido = errors.New("IdDiagnostico debe ser un número válido")
-	ErrFechaInicioInvalida  = errors.New("formato de FechaInicio inválido")
-	ErrFechaFinInvalida     = errors.New("formato de FechaFin inválido")
+	ErrFechaInicioInvalida   = errors.New("formato de FechaInicio inválido")
+	ErrFechaFinInvalida      = errors.New("formato de FechaFin inválido")
 )
 
 // ValidarParametrosDiagnostico valida los parámetros comunes de diagnóstico

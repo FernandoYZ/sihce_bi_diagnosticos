@@ -94,3 +94,55 @@ func (s *servicioDiagnostico) GetEdadesPorDiagnosticoConValidacion(ctx context.C
 
 	return s.repo.GetEdadesPorDiagnostico(ctx, idDiagnostico, fechaInicioFmt, fechaFinFmt)
 }
+
+// GetDistritosPorDiagnosticoConValidacion valida, parsea y formatea las fechas antes de llamar al repositorio
+func (s *servicioDiagnostico) GetDistritosPorDiagnosticoConValidacion(ctx context.Context, idDiagnosticoStr, fechaInicioStr, fechaFinStr string) ([]models.DistritosPorDiagnostico, error) {
+	// Validar parámetros
+	if err := ValidarParametrosDiagnostico(idDiagnosticoStr, fechaInicioStr, fechaFinStr); err != nil {
+		return nil, err
+	}
+
+	// Convertir ID
+	idDiagnostico, err := ConvertirIdDiagnostico(idDiagnosticoStr)
+	if err != nil {
+		return nil, err
+	}
+
+	// Parsear y validar fechas
+	fechaInicio, fechaFin, err := ParsearFechas(fechaInicioStr, fechaFinStr)
+	if err != nil {
+		return nil, err
+	}
+
+	// Formatear fechas para SQL
+	fechaInicioFmt := FormatearFechaSQL(fechaInicio)
+	fechaFinFmt := FormatearFechaSQL(fechaFin)
+
+	return s.repo.GetDistritosPorDiagnostico(ctx, idDiagnostico, fechaInicioFmt, fechaFinFmt)
+}
+
+// GetAtencionesPorDiaConValidacion valida, parsea y formatea las fechas antes de llamar al repositorio
+func (s *servicioDiagnostico) GetAtencionesPorDiaConValidacion(ctx context.Context, idDiagnosticoStr, fechaInicioStr, fechaFinStr string) ([]models.AtencionesPorDia, error) {
+	// Validar parámetros
+	if err := ValidarParametrosDiagnostico(idDiagnosticoStr, fechaInicioStr, fechaFinStr); err != nil {
+		return nil, err
+	}
+
+	// Convertir ID
+	idDiagnostico, err := ConvertirIdDiagnostico(idDiagnosticoStr)
+	if err != nil {
+		return nil, err
+	}
+
+	// Parsear y validar fechas
+	fechaInicio, fechaFin, err := ParsearFechas(fechaInicioStr, fechaFinStr)
+	if err != nil {
+		return nil, err
+	}
+
+	// Formatear fechas para SQL
+	fechaInicioFmt := FormatearFechaSQL(fechaInicio)
+	fechaFinFmt := FormatearFechaSQL(fechaFin)
+
+	return s.repo.GetAtencionesPorDia(ctx, idDiagnostico, fechaInicioFmt, fechaFinFmt)
+}

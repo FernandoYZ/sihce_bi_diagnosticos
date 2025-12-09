@@ -130,87 +130,128 @@ const (
 		AND a.FyHFinal IS NOT NULL
 		GROUP BY p.IdTipoSexo
 		ORDER BY Sexo;
-	` 
+	`
 
 	QUERY_OBTENER_EDADES_POR_DIAGNOSTICO = `
 		SELECT 
 			CASE 
-				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 0 AND 5) THEN 'Infante'
-				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 6 AND 11) THEN 'Niños'
-				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 12 AND 17) THEN 'Adolescentes'
-				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 18 AND 29) THEN 'Adultos Jóvenes'
-				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 30 AND 59) THEN 'Adultos'
-				WHEN (te.Codigo = 'A' AND a.Edad >= 60) THEN 'Adultos Mayores'
+				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 0 AND 5) THEN '0-5'
+				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 6 AND 11) THEN '6-11'
+				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 12 AND 17) THEN '12-17'
+				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 18 AND 29) THEN '18-29'
+				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 30 AND 59) THEN '30-59'
+				WHEN (te.Codigo = 'A' AND a.Edad >= 60) THEN '60+'
 
-				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 0 AND 5) THEN 'Infante'
-				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 6 AND 11) THEN 'Niños'
-				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 12 AND 17) THEN 'Adolescentes'
-				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 18 AND 29) THEN 'Adultos Jóvenes'
-				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 30 AND 59) THEN 'Adultos'
-				WHEN (te.Codigo = 'M' AND a.Edad / 12 >= 60) THEN 'Adultos Mayores'
+				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 0 AND 5) THEN '0-5'
+				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 6 AND 11) THEN '6-11'
+				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 12 AND 17) THEN '12-17'
+				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 18 AND 29) THEN '18-29'
+				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 30 AND 59) THEN '30-59'
+				WHEN (te.Codigo = 'M' AND a.Edad / 12 >= 60) THEN '60+'
 
-				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 0 AND 5) THEN 'Infante'
-				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 6 AND 11) THEN 'Niños'
-				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 12 AND 17) THEN 'Adolescentes'
-				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 18 AND 29) THEN 'Adultos Jóvenes'
-				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 30 AND 59) THEN 'Adultos'
-				WHEN (te.Codigo = 'D' AND a.Edad / 365 >= 60) THEN 'Adultos Mayores'
+				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 0 AND 5) THEN '0-5'
+				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 6 AND 11) THEN '6-11'
+				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 12 AND 17) THEN '12-17'
+				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 18 AND 29) THEN '18-29'
+				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 30 AND 59) THEN '30-59'
+				WHEN (te.Codigo = 'D' AND a.Edad / 365 >= 60) THEN '60+'
 
-				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 0 AND 5) THEN 'Infante'
-				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 6 AND 11) THEN 'Niños'
-				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 12 AND 17) THEN 'Adolescentes'
-				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 18 AND 29) THEN 'Adultos Jóvenes'
-				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 30 AND 59) THEN 'Adultos'
-				WHEN (te.Codigo = 'H' AND a.Edad / 8760 >= 60) THEN 'Adultos Mayores'
+				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 0 AND 5) THEN '0-5'
+				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 6 AND 11) THEN '6-11'
+				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 12 AND 17) THEN '12-17'
+				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 18 AND 29) THEN '18-29'
+				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 30 AND 59) THEN '30-59'
+				WHEN (te.Codigo = 'H' AND a.Edad / 8760 >= 60) THEN '60+'
 
 				ELSE 'Desconocido'
-			END AS GrupoEdad,
-
+			END AS RangoEdad,
 			COUNT(DISTINCT a.IdAtencion) AS CantidadAtenciones
-
 		FROM Atenciones a
 		INNER JOIN AtencionesDiagnosticos ad ON a.IdAtencion = ad.IdAtencion
 		INNER JOIN TiposEdad te ON a.IdTipoEdad = te.IdTipoEdad
-
 		WHERE a.FechaIngreso >= @FechaInicio
 		AND a.FechaIngreso <= @FechaFin
-		AND a.FechaEgreso IS NOT NULL
-		AND a.FyHFinal IS NOT NULL
 		AND ad.IdDiagnostico = @IdDiagnostico
-
-		GROUP BY
+		GROUP BY 
 			CASE 
-				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 0 AND 5) THEN 'Infante'
-				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 6 AND 11) THEN 'Niños'
-				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 12 AND 17) THEN 'Adolescentes'
-				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 18 AND 29) THEN 'Adultos Jóvenes'
-				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 30 AND 59) THEN 'Adultos'
-				WHEN (te.Codigo = 'A' AND a.Edad >= 60) THEN 'Adultos Mayores'
+				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 0 AND 5) THEN '0-5'
+				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 6 AND 11) THEN '6-11'
+				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 12 AND 17) THEN '12-17'
+				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 18 AND 29) THEN '18-29'
+				WHEN (te.Codigo = 'A' AND a.Edad BETWEEN 30 AND 59) THEN '30-59'
+				WHEN (te.Codigo = 'A' AND a.Edad >= 60) THEN '60+'
 
-				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 0 AND 5) THEN 'Infante'
-				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 6 AND 11) THEN 'Niños'
-				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 12 AND 17) THEN 'Adolescentes'
-				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 18 AND 29) THEN 'Adultos Jóvenes'
-				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 30 AND 59) THEN 'Adultos'
-				WHEN (te.Codigo = 'M' AND a.Edad / 12 >= 60) THEN 'Adultos Mayores'
+				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 0 AND 5) THEN '0-5'
+				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 6 AND 11) THEN '6-11'
+				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 12 AND 17) THEN '12-17'
+				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 18 AND 29) THEN '18-29'
+				WHEN (te.Codigo = 'M' AND a.Edad / 12 BETWEEN 30 AND 59) THEN '30-59'
+				WHEN (te.Codigo = 'M' AND a.Edad / 12 >= 60) THEN '60+'
 
-				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 0 AND 5) THEN 'Infante'
-				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 6 AND 11) THEN 'Niños'
-				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 12 AND 17) THEN 'Adolescentes'
-				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 18 AND 29) THEN 'Adultos Jóvenes'
-				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 30 AND 59) THEN 'Adultos'
-				WHEN (te.Codigo = 'D' AND a.Edad / 365 >= 60) THEN 'Adultos Mayores'
+				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 0 AND 5) THEN '0-5'
+				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 6 AND 11) THEN '6-11'
+				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 12 AND 17) THEN '12-17'
+				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 18 AND 29) THEN '18-29'
+				WHEN (te.Codigo = 'D' AND a.Edad / 365 BETWEEN 30 AND 59) THEN '30-59'
+				WHEN (te.Codigo = 'D' AND a.Edad / 365 >= 60) THEN '60+'
 
-				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 0 AND 5) THEN 'Infante'
-				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 6 AND 11) THEN 'Niños'
-				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 12 AND 17) THEN 'Adolescentes'
-				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 18 AND 29) THEN 'Adultos Jóvenes'
-				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 30 AND 59) THEN 'Adultos'
-				WHEN (te.Codigo = 'H' AND a.Edad / 8760 >= 60) THEN 'Adultos Mayores'
+				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 0 AND 5) THEN '0-5'
+				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 6 AND 11) THEN '6-11'
+				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 12 AND 17) THEN '12-17'
+				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 18 AND 29) THEN '18-29'
+				WHEN (te.Codigo = 'H' AND a.Edad / 8760 BETWEEN 30 AND 59) THEN '30-59'
+				WHEN (te.Codigo = 'H' AND a.Edad / 8760 >= 60) THEN '60+'
 
 				ELSE 'Desconocido'
 			END
-
 		ORDER BY CantidadAtenciones DESC;
+	`
+
+	QUERY_OBTENER_CANTIDADES_POR_DISTRITO = `
+		WITH CTE_AtencionesFiltradas AS (
+			SELECT a.IdAtencion, p.IdPaciente, p.IdDistritoProcedencia
+			FROM Atenciones a
+			INNER JOIN AtencionesDiagnosticos ad ON a.IdAtencion = ad.IdAtencion
+			INNER JOIN Diagnosticos d ON ad.IdDiagnostico = d.IdDiagnostico
+			INNER JOIN Pacientes p ON a.IdPaciente = p.IdPaciente
+			WHERE a.FechaIngreso >= @FechaInicio
+			AND a.FechaIngreso <= @FechaFin
+			AND a.FechaEgreso IS NOT NULL
+			AND a.FyHFinal IS NOT NULL
+			AND ad.IdDiagnostico = @IdDiagnostico
+		)
+
+		SELECT 
+			di.IdDistrito, 
+			di.Nombre AS NombreDistrito, 
+			pro.Nombre AS NombreProvincia,
+			COUNT(DISTINCT af.IdAtencion) AS CantidadAtenciones
+		FROM CTE_AtencionesFiltradas af
+		INNER JOIN Distritos di ON af.IdDistritoProcedencia = di.IdDistrito
+		INNER JOIN Provincias pro ON di.IdProvincia = pro.IdProvincia
+		GROUP BY di.IdDistrito, di.Nombre, pro.Nombre
+		ORDER BY CantidadAtenciones DESC, di.Nombre, pro.Nombre;
+	`
+
+	QUERY_OBTENER_CANTIDAD_ATENCIONES_POR_DIA = `
+		SELECT 
+			CAST(a.FechaIngreso AS DATE) AS Fecha,
+			COUNT(a.IdAtencion) AS CantidadAtenciones
+		FROM 
+			Atenciones a
+		INNER JOIN 
+			AtencionesDiagnosticos ad ON a.IdAtencion = ad.IdAtencion
+		INNER JOIN 
+			Diagnosticos d ON ad.IdDiagnostico = d.IdDiagnostico
+		WHERE 
+			a.FechaIngreso >= @FechaInicio
+			AND a.FechaIngreso <= @FechaFin
+			AND a.FechaEgreso IS NOT NULL
+			AND a.FyHFinal IS NOT NULL
+			AND ad.IdDiagnostico = @IdDiagnostico
+		GROUP BY 
+			CAST(a.FechaIngreso AS DATE)
+		ORDER BY 
+			Fecha;
 	`
 )
