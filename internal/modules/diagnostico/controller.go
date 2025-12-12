@@ -27,6 +27,8 @@ func (c *controller) Router(r *mux.Router) {
 	r.HandleFunc("/api/edades-por-diagnostico", c.GetEdadesPorDiagnosticoHandler).Methods(http.MethodGet)
 	r.HandleFunc("/api/distritos-por-diagnostico", c.GetDistritosPorDiagnosticoHandler).Methods(http.MethodGet)
 	r.HandleFunc("/api/atenciones-por-dia", c.GetAtencionesPorDiaHandler).Methods(http.MethodGet)
+	r.HandleFunc("/api/rango-edades-sexo", c.GetRangoEdadesSexoHandler).Methods(http.MethodGet)
+	r.HandleFunc("/api/condicion-paciente", c.ObtenerCondicionPaciente).Methods(http.MethodGet)
 }
 
 func (c *controller) GetSexoPorDiagnosticoHandler(w http.ResponseWriter, r *http.Request) {
@@ -91,7 +93,7 @@ func (c *controller) GetAtencionesPorDiaHandler(w http.ResponseWriter, r *http.R
 	fechaInicioStr := r.URL.Query().Get("FechaInicio")
 	fechaFinStr := r.URL.Query().Get("FechaFin")
 
-	atencionesPorDiaData, err := c.servicio.GetAtencionesPorDiaConValidacion(r.Context(), idDiagnosticoStr, fechaInicioStr, fechaFinStr)
+	atencionesTiempoData, err := c.servicio.GetAtencionesPorDiaConValidacion(r.Context(), idDiagnosticoStr, fechaInicioStr, fechaFinStr)
 	if err != nil {
 		log.Printf("Error en GetAtencionesPorDiaHandler: %v", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -100,7 +102,7 @@ func (c *controller) GetAtencionesPorDiaHandler(w http.ResponseWriter, r *http.R
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(atencionesPorDiaData); err != nil {
+	if err := json.NewEncoder(w).Encode(atencionesTiempoData); err != nil {
 		http.Error(w, "Error al serializar los resultados de atenciones por dia", http.StatusInternalServerError)
 	}
 }
@@ -128,6 +130,44 @@ func (c *controller) GetResumenHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Error al renderizar SummaryCards: %v", err)
 		http.Error(w, "Error al renderizar el resumen", http.StatusInternalServerError)
 		return
+	}
+}
+
+func (c *controller) GetRangoEdadesSexoHandler(w http.ResponseWriter, r *http.Request) {
+	idDiagnosticoStr := r.URL.Query().Get("IdDiagnostico")
+	fechaInicioStr := r.URL.Query().Get("FechaInicio")
+	fechaFinStr := r.URL.Query().Get("FechaFin")
+
+	rangoEdadesSexoData, err := c.servicio.GetRangoEdadesSexoConValidacion(r.Context(), idDiagnosticoStr, fechaInicioStr, fechaFinStr)
+	if err != nil {
+		log.Printf("Error en GetRangoEdadesSexoHandler: %v", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(rangoEdadesSexoData); err != nil {
+		http.Error(w, "Error al serializar los resultados de rango de edades y sexo", http.StatusInternalServerError)
+	}
+}
+
+func (c *controller) ObtenerCondicionPaciente(w http.ResponseWriter, r *http.Request) {
+	idDiagnosticoStr := r.URL.Query().Get("IdDiagnostico")
+	fechaInicioStr := r.URL.Query().Get("FechaInicio")
+	fechaFinStr := r.URL.Query().Get("FechaFin")
+
+	condicionPaciente, err := c.servicio.ObtenerCondicionPaciente(r.Context(), idDiagnosticoStr, fechaInicioStr, fechaFinStr)
+	if err != nil {
+		log.Printf("Error en ObtenerCondicionPaciente: %v", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(condicionPaciente); err != nil {
+		http.Error(w, "Error al obtener los datos de la condición del paciente", http.StatusInternalServerError)
 	}
 }
 
