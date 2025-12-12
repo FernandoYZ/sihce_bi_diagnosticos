@@ -237,99 +237,180 @@ document.addEventListener('alpine:init', () => {
         chart: null,
         hasData: false,
         init() {
-            const mesesCortos = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-
             const options = {
-                chart: {
-                    type: 'area',
-                    height: 350,
-                    toolbar: { show: true },
-                    fontFamily: 'Inter, sans-serif',
-                    zoom: { enabled: true }
+            chart: {
+                type: 'area',
+                height: 360,
+                fontFamily: 'Inter, sans-serif',
+                animations: {
+                enabled: true,
+                easing: 'easeinout',
+                speed: 700
+                }
+            },
+
+            series: [
+                { name: 'Periodo Anterior', type: 'line', data: [] },
+                { name: 'Periodo Actual', type: 'area', data: [] }
+            ],
+
+            colors: ['#94a3b8', '#4f46e5'],
+
+            stroke: {
+                curve: 'smooth',
+                width: [2, 2],
+                dashArray: [6, 0]
+            },
+
+            fill: {
+                type: 'solid',
+                opacity: [1, 0.25]   // línea sólida, área transparente elegante
+            },
+
+            markers: {
+                size: [4, 4],       // línea + área con puntos
+                strokeWidth: 2,
+                hover: { size: 6 }
+            },
+
+            xaxis: {
+                categories: [],
+                tickPlacement: 'between',
+                labels: {
+                rotate: -45,
+                style: {
+                    fontSize: '11px',
+                    colors: '#6b7280'
+                }
                 },
-                series: [{ name: 'Atenciones', data: [] }],
-                xaxis: {
-                    categories: [],
-                    labels: {
-                        rotate: -45,
-                        style: {
-                            fontSize: '11px'
-                        }
-                    }
+                axisBorder: { show: false },
+                axisTicks: { show: false }
+            },
+
+            yaxis: {
+                labels: {
+                style: { colors: '#6b7280' }
                 },
-                yaxis: {
-                    title: {
-                        text: 'Cantidad de Atenciones'
-                    }
-                },
-                dataLabels: {
-                    enabled: false
-                },
-                stroke: {
-                    curve: 'smooth',
-                    width: 2
-                },
-                fill: {
-                    colors: ['#2563eb']
-                },
+                title: {
+                text: 'Cantidad de Atenciones',
+                style: {
+                    fontSize: '12px',
+                    fontWeight: 500
+                }
+                }
+            },
+
+            grid: {
+                borderColor: '#e5e7eb',
+                strokeDashArray: 3,
+                padding: {
+                left: 12,
+                right: 12
+                }
+            },
+
+            legend: {
+                position: 'top',
+                horizontalAlign: 'center',
                 markers: {
-                    size: 4,
-                    colors: ['#2563eb'],
-                    strokeColors: '#fff',
-                    strokeWidth: 2,
-                    hover: {
-                        size: 6
-                    }
-                },
-                grid: {
-                    show: true,
-                    borderColor: '#e0e0e0',
-                    strokeDashArray: 2,
-                },
-                tooltip: {
-                    custom: function({ series, seriesIndex, dataPointIndex, w }) {
-                        const value = series[seriesIndex][dataPointIndex];
-                        const fecha = w.globals.labels[dataPointIndex];
-                        return '<div class="px-3 py-2 bg-white border border-slate-200 rounded shadow-lg">' +
-                               '<div class="text-xs text-slate-500">' + fecha + '</div>' +
-                               '<div class="text-sm font-semibold text-slate-800">Atenciones: ' + value + '</div>' +
-                               '</div>';
-                    }
-                },
-                noData: { text: 'Seleccione un diagnóstico y rango de fechas.' }
+                width: 10,
+                height: 10,
+                radius: 12
+                }
+            },
+
+            tooltip: {
+                shared: true,
+                intersect: false,
+                theme: 'light'
+            },
+
+            dataLabels: { enabled: false },
+
+            noData: {
+                text: 'Seleccione un diagnóstico y rango de fechas',
+                align: 'center',
+                verticalAlign: 'middle',
+                style: {
+                color: '#6b7280',
+                fontSize: '14px'
+                }
+            }
             };
+
             this.chart = new ApexCharts(this.$refs.chart, options);
             this.chart.render();
-            this.mesesCortos = mesesCortos;
         },
         fetchData(id, inicio, fin) {
+            console.log("Fetching data with:", { id, inicio, fin });
             if (!id || !inicio || !fin) {
                 this.hasData = false;
-                this.chart.updateOptions({ series: [{ data: [] }], xaxis: { categories: [] } });
+                this.chart.updateOptions({ 
+                    series: [
+                        { name: 'Periodo Anterior', data: [] },
+                        { name: 'Periodo Actual', data: [] }
+                    ], 
+                    xaxis: { categories: [] } 
+                });
                 return;
             }
             const params = new URLSearchParams({ IdDiagnostico: id, FechaInicio: inicio, FechaFin: fin });
             fetch(`/api/atenciones-por-dia?${params}`)
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`HTTP error! status: ${res.status}`);
+                    }
+                    return res.json();
+                })
                 .then(data => {
-                    if (data && data.length > 0) {
-                        const fechasFormateadas = data.map(d => {
-                            const [year, month, day] = d.fecha.split('T')[0].split('-');
-                            return `${day} ${this.mesesCortos[parseInt(month) - 1]}`;
-                        });
+                    console.log("Data received from API:", data);
 
-                        const cantidades = data.map(d => d.cantidadAtenciones);
+                    if (data && data.periodoActual && data.periodoActual.length > 0) {
+                        const fechasFormateadas = data.periodoActual.map(d => d.fecha);
+                        const cantidadesActual = data.periodoActual.map(d => d.cantidadAtenciones);
+                        const cantidadesAnterior = data.periodoAnterior.map(d => d.cantidadAtenciones);
+
+                        console.log("Processed data for chart:", { fechasFormateadas, cantidadesActual, cantidadesAnterior });
 
                         this.chart.updateOptions({
-                            series: [{ name: 'Atenciones', data: cantidades }],
-                            xaxis: { categories: fechasFormateadas }
+                            series: [
+                                { name: 'Periodo Anterior', data: cantidadesAnterior },
+                                { name: 'Periodo Actual', data: cantidadesActual }
+                            ],
+                            xaxis: { categories: fechasFormateadas },
+                            title: {
+                                text: `Tendencia de Atenciones (${data.tipo})`,
+                                align: 'left',
+                                style: { fontSize: '16px', color: '#333' }
+                            }
                         });
                         this.hasData = true;
                     } else {
+                        console.log("No data received or data is empty. Resetting chart.");
                         this.hasData = false;
-                        this.chart.updateOptions({ series: [{ data: [] }], xaxis: { categories: [] } });
+                        this.chart.updateOptions({ 
+                            series: [
+                                { name: 'Periodo Anterior', data: [] },
+                                { name: 'Periodo Actual', data: [] }
+                            ], 
+                            xaxis: { categories: [] },
+                            title: { text: '' }
+                        });
                     }
+                })
+                .catch(error => {
+                    console.error("Error fetching or processing data:", error);
+                    this.hasData = false;
+                    this.chart.updateOptions({ 
+                        series: [
+                            { name: 'Periodo Anterior', data: [] },
+                            { name: 'Periodo Actual', data: [] }
+                        ], 
+                        xaxis: { categories: [] },
+                        title: { text: 'Error al cargar datos' }
+                    });
                 });
         }
     }));
+
 });
