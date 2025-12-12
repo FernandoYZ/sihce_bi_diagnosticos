@@ -13,15 +13,22 @@ type Config struct {
 	DBTrustServerCertificate string
 }
 
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
+}
+
 func CargarConfiguracion() Config {
 	return Config{
-		ServerPort:               os.Getenv("PORT"),
+		ServerPort:               getEnv("PORT", "3211"),
 		DBUser:                   os.Getenv("DB_USER"),
 		DBPassword:               os.Getenv("DB_PASSWORD"),
 		DBServer:                 os.Getenv("DB_SERVER"),
-		DBPort:                   os.Getenv("DB_PORT"),
+		DBPort:                   getEnv("DB_PORT", "1433"),
 		DBName:                   os.Getenv("DB_1"),
-		DBEncrypt:                os.Getenv("DB_ENCRYPT"),
-		DBTrustServerCertificate: os.Getenv("DB_TRUST_SERVER_CERTIFICATE"),
+		DBEncrypt:                getEnv("DB_ENCRYPT", "false"),
+		DBTrustServerCertificate: getEnv("DB_TRUST_SERVER_CERTIFICATE", "false"),
 	}
 }
