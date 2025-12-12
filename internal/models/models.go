@@ -37,7 +37,29 @@ type DistritosPorDiagnostico struct {
 	CantidadAtenciones int    `json:"cantidadAtenciones"`
 }
 
-type AtencionesPorDia struct {
+type AtencionesPorTiempo struct {
 	Fecha              string `json:"fecha"`
 	CantidadAtenciones int    `json:"cantidadAtenciones"`
+}
+
+type AtencionesTiempoResponse struct {
+	PeriodoActual   []AtencionesPorTiempo `json:"periodoActual"`
+	PeriodoAnterior []AtencionesPorTiempo `json:"periodoAnterior"`
+	Tipo            string                `json:"tipo"`
+}
+
+type RangoEdadSexo struct {
+	RangoEdad string `json:"rangoEdad"`
+	Masculino string `json:"masculino"`
+	Femenino  string `json:"femenino"`
+}
+
+type CondicionPaciente struct {
+	TipoCondicionAlServicio string `json:"condicionPaciente"`
+	Cantidad      int    `json:"cantidad"`
+}
+
+type ClasificacionDiagnostico struct {
+	ClasificacionDiagnostico string `json:"clasificacionDiagnostico"`
+	Cantidad      int    `json:"cantidad"`
 }
